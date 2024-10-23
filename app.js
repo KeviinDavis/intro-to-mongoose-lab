@@ -26,16 +26,17 @@ mongoose.connect(process.env.MONGO_URI)
 let running = true;
 
 while (running) {
-    console.log('/nWhat would you like to do?');
+    console.log('\nWhat would you like to do?');
     console.log('1. Create a customer?');
     console.log('2. View all customer?');
+    console.log('3. Update a customer');
     console.log('Quit');
     const choice = prompt('Enter a number: ');
 
     switch (choice) {
         case '1':
         //Create a customer
-        const name = promt('Enter customer name: ');
+        const name = prompt('Enter customer name: ');
         const age = parseInt(prompt('Enter customer age: '), 10);
         const newCustomer = new Customer({ name, age });
         newCustomer.save()
@@ -44,16 +45,45 @@ while (running) {
         break;
 
         case '2':
-        //View all customers 
-        Customer.find()
-        .then((customers) => console.log(customers))
-        customers.forEach(customers => {
-            console.log(`Name: ${customers.name}, Age: ${customers.age}`);
+      // View all customers
+      Customer.find()
+        .then((customers) => {
+          console.log('\nCustomers:');
+          customers.forEach(customer => { // Inside the .then block
+            console.log(`Name: ${customer.name}, Age: ${customer.age}`);
+          });
         })
-    }};
-
         .catch((error) => console.error('Error finding customers:', error));
+      break;
+
+      case '3':
+        //Update a customer
+        const customerIdToUpdate = prompt('Enter the ID of the customer you want to update: ');
+        const updatedName = prompt('Enter the new name: ');
+        const updatedAge = parseInt(prompt('Enter the new age: '), 10);
+
+        Customer.findByIdAndUpdate(customerIdToUpdate, { name: updatedName, age: updatedAge }, {new: true})
+        .then((updatedCustomer) => {
+            if(updatedCustomer) {
+                console.log(`Customer updated: Name: ${updatedCustomer.name}, Age: ${updatedCustomer.age}`)
+            } else {
+                console.log('Customer not found');
+            }
+        })
+        .catch((error) => console.error('Error updating customer:', error));
         break;
 
-        case '3':
-            
+
+
+        case '5':
+            // Exit the program
+            running = false;
+            console.log('Exiting...');
+            mongoose.connection.close(); // Close the database connection before exiting
+            break;
+
+            default:
+            console.log('Invalid choice. Please try again.');
+        }
+        }
+
