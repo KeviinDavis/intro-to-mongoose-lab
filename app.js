@@ -27,10 +27,11 @@ let running = true;
 
 while (running) {
     console.log('\nWhat would you like to do?');
-    console.log('1. Create a customer?');
-    console.log('2. View all customer?');
+    console.log('1. Create a customer');
+    console.log('2. View all customers');
     console.log('3. Update a customer');
-    console.log('Quit');
+    console.log('4. Delete a customer');
+    console.log('5. Quit');    
     const choice = prompt('Enter a number: ');
 
     switch (choice) {
@@ -73,7 +74,21 @@ while (running) {
         .catch((error) => console.error('Error updating customer:', error));
         break;
 
+        case '4':
+            //Delete a customer
+            const customerIdToDelete = prompt('Enter the ID of the customer you want to delete: ');
 
+            Customer.findByIdAndDelete(customerIdToDelete)
+            .then((deletedCustomer) => {
+                if(deletedCustomer) {
+                    console.log('Customer deleted successfully.');
+                    } else {
+                        console.log('Customer not found');
+                }
+            })
+
+            .catch((error) => console.error('Error deleting customer:', error));
+        break;
 
         case '5':
             // Exit the program
